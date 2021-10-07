@@ -1,2 +1,5 @@
+# this will not allow node modules to github
 node_modules/
+
+# This will avoid system files
 .DS_Store/

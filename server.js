@@ -83,7 +83,7 @@ const viewAllDept = () => {
 // SQL Query/Function for viewing all roles
 const viewAllRoles = () => {
   db.query(`SELECT A.id, A.title, A.salary, B.name AS Departments, A.department_id
-            FROM role AS A
+            FROM roles AS A
             JOIN departments as B
             ON A.department_id = B.id `, function (err, result) {
     if (err) {
@@ -97,12 +97,12 @@ const viewAllRoles = () => {
 // SQL Query/Function for viewing all employees
 const viewAllEmployee = () => {
   var sqlQuery = `SELECT e.id, e.first_name, e.last_name, r.title, d.name AS departments, r.salary, CONCAT(m.first_name, ' ', m.last_name) AS manager
-  FROM employee e
-  LEFT JOIN role r
+  FROM employees e
+  LEFT JOIN roles r
 	ON e.role_id = r.id
   LEFT JOIN departments d
   ON d.id = r.department_id
-  LEFT JOIN employee m
+  LEFT JOIN employees m
 	ON m.id = e.manager_id` ;
 
   db.query(sqlQuery, function (err, res) {

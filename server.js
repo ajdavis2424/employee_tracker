@@ -2,7 +2,7 @@
 // Installed CONSOLE TABLE PACKAGE (this allosw me to print myql rows to console) --> npm install console.table --save  // bower install console.table --save
 
 // MYSQL login -- mysql -u root -p
-// MAKE DATABASE IN TERMINAL
+// MAKE DATABASE IN TERMINAL OR source schema.sql
 
 
 //Import required libraries
@@ -16,7 +16,7 @@ const db = mysql.createConnection(
   {
     host: 'localhost',
     user: 'root',
-    password: '***********',
+    password: 'EMTschool1!',
     database: 'shellcompany_db'
   },
   console.log(`Connected to the shellcompany_db database.`)
@@ -71,7 +71,7 @@ const mainMenuPrompt = () => {
 }
 // SQL Query/Function for viewing All Department
 const viewAllDept = () => {
-  db.query(`SELECT * FROM department`, function (err, result) {
+  db.query(`SELECT * FROM departments`, function (err, result) {
     if (err) {
       console.log(err);
     }
@@ -82,9 +82,9 @@ const viewAllDept = () => {
 
 // SQL Query/Function for viewing all roles
 const viewAllRoles = () => {
-  db.query(`SELECT A.id, A.title, A.salary, B.name AS Department, A.department_id
+  db.query(`SELECT A.id, A.title, A.salary, B.name AS Departments, A.department_id
             FROM role AS A
-            JOIN department as B
+            JOIN departments as B
             ON A.department_id = B.id `, function (err, result) {
     if (err) {
       console.log(err);
@@ -96,11 +96,11 @@ const viewAllRoles = () => {
 
 // SQL Query/Function for viewing all employees
 const viewAllEmployee = () => {
-  var sqlQuery = `SELECT e.id, e.first_name, e.last_name, r.title, d.name AS department, r.salary, CONCAT(m.first_name, ' ', m.last_name) AS manager
+  var sqlQuery = `SELECT e.id, e.first_name, e.last_name, r.title, d.name AS departments, r.salary, CONCAT(m.first_name, ' ', m.last_name) AS manager
   FROM employee e
   LEFT JOIN role r
 	ON e.role_id = r.id
-  LEFT JOIN department d
+  LEFT JOIN departments d
   ON d.id = r.department_id
   LEFT JOIN employee m
 	ON m.id = e.manager_id` ;
@@ -115,7 +115,6 @@ const viewAllEmployee = () => {
 }
 
 //SQL Query/Function for adding a Department
-
 const addDept = () => {
   inquirer
   .prompt([
@@ -128,7 +127,7 @@ const addDept = () => {
   .then((answer) => {
     let deptName = answer.dept;
     console.log(deptName);
-    db.query(`INSERT INTO department (name) VALUES ('${deptName}')`, (err, result) => {
+    db.query(`INSERT INTO departments (name) VALUES ('${deptName}')`, (err, result) => {
       if (err) {
         console.log(err);
       }
@@ -142,7 +141,7 @@ const addDept = () => {
 // SQL Query/Function for adding a role
 const addRole = () => {
   var addRoleQuery =
-    `SELECT id , name FROM department`
+    `SELECT id , name FROM departments`
   db.query(addRoleQuery, function (err, res) {
     if (err) {
       console.log('Error while fetching department data');
@@ -181,7 +180,7 @@ function promptForAddingRole(empdept) {
     let newSalary = answer.salary;
     let dept = answer.dept;
 
-    db.query(`SELECT ID FROM department WHERE name = ('${answer.dept}')`, (err, result) => {
+    db.query(`SELECT ID FROM departments WHERE name = ('${answer.dept}')`, (err, result) => {
       if (err) {
         console.log(err);
       }
@@ -233,23 +232,23 @@ function promptForAddingEmployee(empRole, empMngr) {
     {
       type: "input",
       name: "employeeFirstName",
-      message: "What is employee's first Name?"
+      message: "What is the employee's first Name?"
     },
     {
       type: "input",
       name: "employeeLastName",
-      message: "What is employee's last Name?"
+      message: "What is the employee's last Name?"
     },
     {
       type: "list",
       name: "employeeRole",
-      message: "What is employee's role?",
+      message: "What is the employee's role?",
       choices: empRole,
     },
     {
       type: "list",
       name: "employeeManager",
-      message: "Who is employee's Manager?",
+      message: "Who is the employee's Manager?",
       choices: empMngr,
     },
 
@@ -274,8 +273,8 @@ function promptForAddingEmployee(empRole, empMngr) {
           if (err) {
             console.log(err);
           }
-          console.log("ROW added sucessfully");
-          mainPrompt();
+          console.log("ROW ADDED SUCCESSFULLY");
+          mainMenuPrompt();
         })
       });
     });
@@ -284,7 +283,7 @@ function promptForAddingEmployee(empRole, empMngr) {
 
 }
 //Function for updating a role
-function updateEmpRole() {
+const updateEmpRole = () => {
 
   var query1 = `SELECT first_name, last_name FROM employee`
   db.query(query1, function (err, res) {
@@ -344,13 +343,12 @@ function promptForUpdatingEmployeeRole(empName, empRole) {
 
         var empId = result[0].id;
 
-
         var query = `UPDATE employee SET role_id = ? WHERE id = ?`
         db.query(query, [newEmpRole_id, empId], (err, result) => {
           if (err) {
             console.log(err);
           }
-          console.log("Updated the Information");
+          console.log("Info Updated");
           mainMenuPrompt();
 
         })

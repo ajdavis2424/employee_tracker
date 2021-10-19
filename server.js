@@ -25,7 +25,7 @@ const db = mysql.createConnection(
 function init() {
   mainMenuPrompt();
 }
-// function for the main prompt for the menu
+// function for the Main Menu prompt 
 const mainMenuPrompt = () => {
   inquirer
   .prompt([
@@ -47,13 +47,13 @@ const mainMenuPrompt = () => {
     switch (userChoice.mainMenu) {
       case "View All Departments": viewAllDept();
         break;
-      case "add an employee": addEmployee();
+      case "Add An Employee": addEmployee();
         break;
-      case "update an employee role": updateEmpRole();
+      case "Update An Employee Role": updateEmpRole();
         break;
       case "View All Roles": viewAllRoles();
         break;
-      case "add a role": addRole();
+      case "Add a Role": addRole();
         break;
       case "View All Employees": viewAllEmployee();
         break;
@@ -82,9 +82,9 @@ const viewAllDept = () => {
 
 // SQL Query/Function for viewing all roles
 const viewAllRoles = () => {
-  db.query(`SELECT A.id, A.title, A.salary, B.name AS Departments, A.department_id
+  db.query(`SELECT A.id, A.title, A.salary, B.department_name AS departments, A.department_id
             FROM roles AS A
-            JOIN departments as B
+            JOIN departments AS B
             ON A.department_id = B.id `, function (err, result) {
     if (err) {
       console.log(err);
@@ -96,7 +96,7 @@ const viewAllRoles = () => {
 
 // SQL Query/Function for viewing all employees
 const viewAllEmployee = () => {
-  var sqlQuery = `SELECT e.id, e.first_name, e.last_name, r.title, d.name AS departments, r.salary, CONCAT(m.first_name, ' ', m.last_name) AS manager
+  var sqlQuery = `SELECT e.id, e.first_name, e.last_name, r.title, d.department_name AS departments, r.salary, CONCAT(m.first_name, ' ', m.last_name) AS manager
   FROM employees e
   LEFT JOIN roles r
 	ON e.role_id = r.id
@@ -127,7 +127,7 @@ const addDept = () => {
   .then((answer) => {
     let deptName = answer.dept;
     console.log(deptName);
-    db.query(`INSERT INTO departments (name) VALUES ('${deptName}')`, (err, result) => {
+    db.query(`INSERT INTO departments (department_name) VALUES ('${deptName}')`, (err, result) => {
       if (err) {
         console.log(err);
       }
@@ -200,7 +200,7 @@ function promptForAddingRole(empdept) {
 //SQL Query/Function for adding an employee
 const addEmployee = () => {
 
-  var addEmployeeQuery = `SELECT department_id , title FROM role`
+  var addEmployeeQuery = `SELECT department_id , title FROM roles`
   db.query(addEmployeeQuery, function (err, res) {
     if (err) {
       console.log('Error while fetching role data');
@@ -210,7 +210,7 @@ const addEmployee = () => {
     for (let index = 0; index < res.length; index++) {
       empRole.push(res[index].title);
     }
-    var query2 = `SELECT  id , first_name, last_name FROM employee`
+    var query2 = `SELECT  id , first_name, last_name FROM employees`
     db.query(query2, function (err, res) {
       if (err) {
         console.log('Error while fetching role data');
@@ -257,19 +257,19 @@ function promptForAddingEmployee(empRole, empMngr) {
 
     let newEmpFName = answers.employeeFirstName;
     let newEmpLName = answers.employeeLastName;
-    db.query(`SELECT id FROM role WHERE title = ('${answers.employeeRole}')`, (err, res) => {
+    db.query(`SELECT id FROM roles WHERE title = ('${answers.employeeRole}')`, (err, res) => {
       if (err) {
         console.log(err);
       }
       var newEmpRole_id = res[0].id;
-      db.query(`SELECT id FROM employee WHERE concat(first_name, " ", last_name) = ('${answers.employeeManager}')`, (err, result) => {
+      db.query(`SELECT id FROM employees WHERE concat(first_name, " ", last_name) = ('${answers.employeeManager}')`, (err, result) => {
         if (err) {
           console.log(err);
         }
 
         var newMgrRole_id = result[0].id;
 
-        db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${newEmpFName}', '${newEmpLName}', '${newEmpRole_id}', '${newMgrRole_id}')`, (err, result) => {
+        db.query(`INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES ('${newEmpFName}', '${newEmpLName}', '${newEmpRole_id}', '${newMgrRole_id}')`, (err, result) => {
           if (err) {
             console.log(err);
           }
@@ -285,7 +285,7 @@ function promptForAddingEmployee(empRole, empMngr) {
 //Function for updating a role
 const updateEmpRole = () => {
 
-  var query1 = `SELECT first_name, last_name FROM employee`
+  var query1 = `SELECT first_name, last_name FROM employees`
   db.query(query1, function (err, res) {
     if (err) {
       console.log('Error while fetching  data');
@@ -295,7 +295,7 @@ const updateEmpRole = () => {
     for (let index = 0; index < res.length; index++) {
       empName.push(res[index].first_name + " " + res[index].last_name);
     }
-    var query2 = `SELECT title FROM role`
+    var query2 = `SELECT title FROM roles`
     db.query(query2, function (err, result) {
       if (err) {
         console.log('Error while fetching role data');
@@ -331,19 +331,19 @@ function promptForUpdatingEmployeeRole(empName, empRole) {
   .then((answers) => {
     let employeeName = answers.employeeName;
     let employeeRole = answers.employeeRole;
-    db.query(`SELECT id FROM role WHERE title = ("${answers.employeeRole}")`, (err, res) => {
+    db.query(`SELECT id FROM roles WHERE title = ("${answers.employeeRole}")`, (err, res) => {
       if (err) {
         console.log(err);
       }
       var newEmpRole_id = res[0].id;
-      db.query(`SELECT id FROM employee WHERE CONCAT(first_name, " ", last_name) = ('${answers.employeeName}')`, (err, result) => {
+      db.query(`SELECT id FROM employees WHERE CONCAT(first_name, " ", last_name) = ('${answers.employeeName}')`, (err, result) => {
         if (err) {
           console.log(err);
         }
 
         var empId = result[0].id;
 
-        var query = `UPDATE employee SET role_id = ? WHERE id = ?`
+        var query = `UPDATE employees SET role_id = ? WHERE id = ?`
         db.query(query, [newEmpRole_id, empId], (err, result) => {
           if (err) {
             console.log(err);

@@ -8,6 +8,9 @@ Link to Demo Video:
 ## Installation 
 npm install, express, inquirer, and add in mysql username & password into the server.js file
 
+## Usage
+node server.js
+
 ## Contributing
 Alexander J. Davis
 ## Questions

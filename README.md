@@ -5,7 +5,7 @@ This program allows users to view departments, roles, and employees. Users can a
 Link to Demo Video:
 
 
-##Installation 
+## Installation 
 npm install, express, inquirer, and add in mysql username & password into the server.js file
 
 ## Contributing

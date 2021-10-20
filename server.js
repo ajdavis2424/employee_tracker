@@ -193,7 +193,7 @@ const addEmployee = () =>{
             }; 
           };
           if(!err){
-            console.log("New Role Added");
+            console.log("New Role Added Successfully!");
             for(let i=0; i<5; i++) {
               console.log(" ");  
             };
@@ -241,7 +241,7 @@ const updateEmployee = () =>{
             }; 
           };
           if(!err){
-            console.log("Role Updated");
+            console.log("Role Updated Successfully!");
             for(let i=0; i<5; i++) {
               console.log(" ");  
             };

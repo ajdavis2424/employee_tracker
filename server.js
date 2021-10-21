@@ -12,13 +12,17 @@ const inquirer = require("inquirer");
 const disp = require("console.table");
 const fs= require("fs");
 const { Console } = require("console");
+require('dotenv').config();
+
+console.log(process.env);
 
 //Here we connect to the shellcompany_db database
+// npm install dotenv--- this plus a .env fill allows us to hide username and password!
 const db = mysql.createConnection(
   {
     host: 'localhost',
-    user: 'root',
-    password: 'EMTschool1!',
+    user: 'process.env.ROOT',
+    password: 'process.env.USER',
     database: 'shellcompany_db'
   },
   console.log(`Connected to the shellcompany_db database.`)

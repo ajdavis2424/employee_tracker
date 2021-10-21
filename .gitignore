@@ -3,3 +3,6 @@ node_modules/
 
 # This will avoid system files
 .DS_Store/
+
+# Adding dotenv file 
+.env
